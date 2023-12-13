@@ -130,7 +130,7 @@ ui_nested_tabs.teal_module <- function(id, modules, datasets, depth = 0L, is_mod
       column(width = 9, teal_ui, class = "teal_primary_col"),
       column(
         width = 3,
-        datasets$ui_filter_panel(ns("module_filter_panel")),
+        ui_filter_panel(ns("module_filter_panel")),
         class = "teal_secondary_col"
       )
     )
@@ -161,7 +161,7 @@ srv_nested_tabs.teal_modules <- function(id, datasets, modules, is_module_specif
   checkmate::assert_list(datasets, types = c("list", "FilteredData"))
 
   moduleServer(id = id, module = function(input, output, session) {
-    logger::log_trace("srv_nested_tabs.teal_modules initializing the module { deparse1(modules$label) }.")
+    logger::log_trace("srv_nested_tabs.teal_modules initializing the module { modules$label }.")
 
     labels <- vapply(modules$children, `[[`, character(1), "label")
     modules_reactive <- sapply(
@@ -199,12 +199,12 @@ srv_nested_tabs.teal_modules <- function(id, datasets, modules, is_module_specif
 srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specific = TRUE,
                                         reporter = teal.reporter::Reporter$new()) {
   checkmate::assert_class(datasets, "FilteredData")
-  logger::log_trace("srv_nested_tabs.teal_module initializing the module: { deparse1(modules$label) }.")
+  logger::log_trace("srv_nested_tabs.teal_module initializing the module: { modules$label }.")
 
   moduleServer(id = id, module = function(input, output, session) {
     modules$server_args <- teal.transform::resolve_delayed(modules$server_args, datasets)
     if (!is.null(modules$datanames) && is_module_specific) {
-      datasets$srv_filter_panel("module_filter_panel")
+      srv_filter_panel("module_filter_panel", datasets)
     }
 
     # Create two triggers to limit reactivity between filter-panel and modules.
@@ -214,6 +214,7 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
     trigger_data <- reactiveVal(1L)
     trigger_module <- reactiveVal(NULL)
     output$data_reactive <- renderUI({
+      logger::log_trace("triggering visible module: { modules$label }.")
       lapply(datasets$datanames(), function(x) {
         datasets$get_data(x, filtered = TRUE)
       })
@@ -234,7 +235,13 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
     }
 
     if (is_arg_used(modules$server, "data")) {
-      data <- eventReactive(trigger_data(), .datasets_to_data(modules, datasets))
+      data <- eventReactive(
+        trigger_data(),
+        {
+          logger::log_trace("trigger data recalculation for module: { modules$label }.")
+          .datasets_to_data(modules, datasets)
+        }
+      )
       args <- c(args, data = list(data))
     }
 
@@ -287,10 +294,11 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
 
   hashes <- calculate_hashes(datanames, datasets)
 
-  code <- c(
+  code <- paste(
     get_rcode_str_install(),
     get_rcode_libraries(),
-    get_datasets_code(datanames, datasets, hashes)
+    get_datasets_code(datanames, datasets, hashes),
+    collapse = "\n"
   )
 
   do.call(

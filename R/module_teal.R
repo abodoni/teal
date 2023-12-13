@@ -155,6 +155,7 @@ srv_teal <- function(id, modules, teal_data_rv, filter = teal_slices()) {
       eventExpr = input$timezone,
       once = TRUE,
       handlerExpr = {
+        logger::log_trace("srv_teal@1 setting to client's timezone: { input$timezone }.")
         session$userData$timezone <- input$timezone
         logger::log_trace("srv_teal@1 Timezone set to client's timezone: { input$timezone }.")
       }
@@ -167,6 +168,7 @@ srv_teal <- function(id, modules, teal_data_rv, filter = teal_slices()) {
 
     env <- environment()
     datasets_reactive <- eventReactive(teal_data_rv(), {
+      logger::log_trace("srv_teal@2 creating datasets_reactive")
       env$progress <- shiny::Progress$new(session)
       env$progress$set(0.25, message = "Setting data")
 
@@ -190,7 +192,7 @@ srv_teal <- function(id, modules, teal_data_rv, filter = teal_slices()) {
           datanames <- if (is.null(modules$datanames) || modules$datanames == "all") {
             include_parent_datanames(
               teal.data::datanames(teal_data_rv()),
-              teal_data_rv()@join_keys
+              teal.data::join_keys(teal_data_rv())
             )
           } else {
             modules$datanames

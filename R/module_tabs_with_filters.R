@@ -82,7 +82,7 @@ ui_tabs_with_filters <- function(id, modules, datasets, filter = teal_slices()) 
     # need to rearrange html so that filter panel is within tabset
     tabset_bar <- teal_ui$children[[1]]
     teal_modules <- teal_ui$children[[2]]
-    filter_ui <- unlist(datasets)[[1]]$ui_filter_panel(ns("filter_panel"))
+    filter_ui <- ui_filter_panel(ns("filter_panel"))
     list(
       tabset_bar,
       tags$hr(class = "my-2"),
@@ -130,7 +130,7 @@ srv_tabs_with_filters <- function(id,
         }
       })
       singleton <- unlist(datasets)[[1]]
-      singleton$srv_filter_panel("filter_panel", active_datanames = active_datanames)
+      srv_filter_panel(id = "filter_panel", filtered_data = singleton, active_datanames = active_datanames)
 
       observeEvent(
         eventExpr = active_datanames(),
@@ -149,7 +149,6 @@ srv_tabs_with_filters <- function(id,
     }
 
     showNotification("Data loaded - App fully started up")
-    logger::log_trace("srv_tabs_with_filters initialized the module")
     return(active_module)
   })
 }
