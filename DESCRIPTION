@@ -1,8 +1,8 @@
 Type: Package
 Package: teal
 Title: Exploratory Web Apps for Analyzing Clinical Trials Data
-Version: 0.14.0.9029
-Date: 2023-12-13
+Version: 0.14.0.9031
+Date: 2023-12-14
 Authors@R: c(
     person("Dawid", "Kaledkowski", , "dawid.kaledkowski@roche.com", role = c("aut", "cre")),
     person("Pawel", "Rucki", , "pawel.rucki@roche.com", role = "aut"),
@@ -63,14 +63,14 @@ VignetteBuilder:
 RdMacros:
     lifecycle
 Config/Needs/verdepcheck: rstudio/shiny, insightsengineering/teal.data,
-    insightsengineering/teal.slice, 
-    mllg/checkmate, jeroen/jsonlite, r-lib/lifecycle, daroczig/logger,
-    tidyverse/magrittr, r-lib/rlang, daattali/shinyjs,
-    insightsengineering/teal.logger, insightsengineering/teal.reporter,
-    insightsengineering/teal.widgets, rstudio/bslib, yihui/knitr,
-    bioc::MultiAssayExperiment, r-lib/R6, rstudio/rmarkdown,
-    rstudio/shinyvalidate, insightsengineering/teal.code, r-lib/testthat,
-    r-lib/withr, yaml=vubiostat/r-yaml
+    insightsengineering/teal.slice, mllg/checkmate, jeroen/jsonlite,
+    r-lib/lifecycle, daroczig/logger, tidyverse/magrittr, r-lib/rlang,
+    daattali/shinyjs, insightsengineering/teal.logger,
+    insightsengineering/teal.reporter, insightsengineering/teal.widgets,
+    rstudio/bslib, yihui/knitr, bioc::MultiAssayExperiment, r-lib/R6,
+    rstudio/rmarkdown, rstudio/shinyvalidate,
+    insightsengineering/teal.code, r-lib/testthat, r-lib/withr,
+    yaml=vubiostat/r-yaml
 Config/Needs/website: insightsengineering/nesttemplate
 Encoding: UTF-8
 Language: en-US
@@ -95,8 +95,9 @@ Collate:
     'show_rcode_modal.R'
     'tdata.R'
     'teal.R'
-    'teal_data_module-eval_code.R'
     'teal_data_module.R'
+    'teal_data_module-eval_code.R'
+    'teal_data_module-within.R'
     'teal_reporter.R'
     'teal_slices-store.R'
     'teal_slices.R'
