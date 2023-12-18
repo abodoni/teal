@@ -212,7 +212,6 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
     trigger_data <- reactiveVal(1L)
     trigger_module <- reactiveVal(NULL)
     output$data_reactive <- renderUI({
-      logger::log_trace("triggering visible module: { modules$label }.")
       lapply(datasets$datanames(), function(x) {
         datasets$get_data(x, filtered = TRUE)
       })
@@ -236,7 +235,7 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
       data <- eventReactive(
         trigger_data(),
         {
-          logger::log_trace("trigger data recalculation for module: { modules$label }.")
+          logger::log_trace("trigger teal_data recreation for module: { modules$label }.")
           .datasets_to_data(modules, datasets)
         }
       )
@@ -254,6 +253,7 @@ srv_nested_tabs.teal_module <- function(id, datasets, modules, is_module_specifi
       once = TRUE,
       eventExpr = trigger_module(),
       handlerExpr = {
+        logger::log_trace("initializing module for the first time: { modules$label }.")
         module_output <- if (is_arg_used(modules$server, "id")) {
           do.call(modules$server, args)
         } else {
